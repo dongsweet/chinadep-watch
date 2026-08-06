@@ -9,7 +9,7 @@ ENV NODE_ENV=production \
     NODE_LOG_DIR=/tmp/egg-logs
 
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
+RUN npm ci --omit=dev && npm cache clean --force
 
 COPY app ./app
 COPY app.js ./app.js
