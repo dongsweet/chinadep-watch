@@ -15,7 +15,8 @@ COPY app ./app
 COPY config ./config
 COPY README.md ./README.md
 
-RUN useradd --system --uid 10001 --create-home appuser \
+RUN mkdir -p /app/app/public /app/run \
+    && useradd --system --uid 10001 --create-home appuser \
     && chown -R appuser:appuser /app
 
 USER appuser
