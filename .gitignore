@@ -1,0 +1,5 @@
+node_modules/
+logs/
+coverage/
+.mochawesome-reports/
+.DS_Store
