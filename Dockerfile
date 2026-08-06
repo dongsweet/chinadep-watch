@@ -12,10 +12,11 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
 
 COPY app ./app
+COPY app.js ./app.js
 COPY config ./config
 COPY README.md ./README.md
 
-RUN mkdir -p /app/app/public /app/run \
+RUN mkdir -p /app/app/public /app/run /data \
     && useradd --system --uid 10001 --create-home appuser \
     && chown -R appuser:appuser /app
 

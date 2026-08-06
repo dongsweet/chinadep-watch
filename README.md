@@ -2,12 +2,16 @@
 
 Egg.js MVP for connecting a user-authorized account to the China Digital Asset Market and later monitoring account-visible market data.
 
+The current web console is available at `/` and uses an SQLite-backed platform account. Set `ADMIN_USERNAME` and `ADMIN_PASSWORD` in `.env` before the first start; the account is created during database initialization. Changing those variables later does not overwrite an existing account.
+
 ## Run
 
 ```bash
 npm install
 npm run dev
 ```
+
+The default local login is `admin` / `admin123` when no environment variables are provided. Change it for any shared environment.
 
 ## API
 

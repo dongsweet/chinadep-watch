@@ -13,6 +13,11 @@ services:
       CHINADEP_BASE_URL: ${CHINADEP_BASE_URL:-https://m-math.chinadep.com}
       CHINADEP_REQUEST_TIMEOUT: ${CHINADEP_REQUEST_TIMEOUT:-15000}
       CHINADEP_USER_AGENT: ${CHINADEP_USER_AGENT:-chinadep-watch/0.1}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
+      SQLITE_PATH: /data/chinadep-watch.sqlite3
+    volumes:
+      - ./data:/data
     read_only: true
     tmpfs:
       - /tmp
