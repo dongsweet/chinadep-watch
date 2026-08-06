@@ -30,6 +30,10 @@ module.exports = appInfo => {
     secure: process.env.COOKIE_SECURE === 'true',
   };
 
+  config.static = {
+    prefix: '/',
+  };
+
   config.sqlite = {
     path: process.env.SQLITE_PATH || path.join(appInfo.baseDir, 'run', 'chinadep-watch.sqlite3'),
   };
