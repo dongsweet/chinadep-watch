@@ -1,0 +1,65 @@
+'use strict';
+
+const { Service } = require('egg');
+const crypto = require('crypto');
+
+class ConnectionStoreService extends Service {
+  getKey() {
+    return crypto.createHash('sha256').update(this.app.config.keys).digest();
+  }
+
+  encrypt(value) {
+    const iv = crypto.randomBytes(12);
+    const cipher = crypto.createCipheriv('aes-256-gcm', this.getKey(), iv);
+    const encrypted = Buffer.concat([cipher.update(value, 'utf8'), cipher.final()]);
+    return [iv, cipher.getAuthTag(), encrypted].map(item => item.toString('base64')).join(':');
+  }
+
+  async saveAuthenticated({ session, deviceToken }) {
+    const now = new Date().toISOString();
+    const params = [
+      session.mobile,
+      this.encrypt(session.token),
+      deviceToken ? this.encrypt(deviceToken) : null,
+      session.userId || null,
+      session.nickName || null,
+      session.isVerified ? 1 : 0,
+      'authenticated',
+      now,
+      now,
+    ];
+    await new Promise((resolve, reject) => {
+      this.app.database.run(`INSERT INTO target_connections
+        (mobile, token_ciphertext, device_token_ciphertext, target_user_id, nick_name,
+         is_verified, status, last_login_at, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(mobile) DO UPDATE SET token_ciphertext = excluded.token_ciphertext,
+          device_token_ciphertext = excluded.device_token_ciphertext,
+          target_user_id = excluded.target_user_id, nick_name = excluded.nick_name,
+          is_verified = excluded.is_verified, status = excluded.status,
+          last_login_at = excluded.last_login_at, last_error = NULL,
+          updated_at = excluded.updated_at`, params, error => error ? reject(error) : resolve());
+    });
+    return {
+      mobile: session.mobile,
+      targetUserId: session.userId || null,
+      nickName: session.nickName || null,
+      isVerified: Boolean(session.isVerified),
+      status: 'authenticated',
+      lastLoginAt: now,
+    };
+  }
+
+  async list() {
+    return new Promise((resolve, reject) => {
+      this.app.database.all(`SELECT mobile, target_user_id AS targetUserId, nick_name AS nickName,
+        is_verified AS isVerified, status, last_login_at AS lastLoginAt, updated_at AS updatedAt
+        FROM target_connections ORDER BY updated_at DESC`, (error, rows) => {
+        if (error) return reject(error);
+        resolve(rows.map(row => ({ ...row, isVerified: Boolean(row.isVerified) })));
+      });
+    });
+  }
+}
+
+module.exports = ConnectionStoreService;

@@ -5,8 +5,17 @@ const { Controller } = require('egg');
 const MOBILE_PATTERN = /^1[3-9]\d{9}$/;
 
 class ConnectionController extends Controller {
+  async list() {
+    if (!this.ctx.session.platformUser) return this.unauthorized();
+    this.ctx.body = {
+      success: true,
+      connections: await this.ctx.service.connectionStore.list(),
+    };
+  }
+
   async login() {
     const { ctx } = this;
+    if (!ctx.session.platformUser) return this.unauthorized();
     const body = ctx.request.body || {};
     const mobile = typeof body.mobile === 'string' ? body.mobile.trim() : '';
     const password = typeof body.password === 'string' ? body.password : '';
@@ -48,8 +57,21 @@ class ConnectionController extends Controller {
       deviceToken: deviceToken || undefined,
     });
 
+    if (result.body.status === 'authenticated') {
+      const connection = await ctx.service.connectionStore.saveAuthenticated({
+        session: result.body.session,
+        deviceToken: deviceToken || undefined,
+      });
+      result.body = { success: true, status: 'authenticated', connection };
+    }
+
     ctx.status = result.httpStatus;
     ctx.body = result.body;
+  }
+
+  unauthorized() {
+    this.ctx.status = 401;
+    this.ctx.body = { success: false, message: '请先登录监控平台' };
   }
 }
 

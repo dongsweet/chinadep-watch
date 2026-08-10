@@ -4,6 +4,8 @@ Egg.js MVP for connecting a user-authorized account to the China Digital Asset M
 
 The current web console is available at `/` and uses an SQLite-backed platform account. Set `ADMIN_USERNAME` and `ADMIN_PASSWORD` in `.env` before the first start; the account is created during database initialization. Changing those variables later does not overwrite an existing account.
 
+After signing in to the console, use the `监控平台账号连接` card to submit the target platform's mobile and password. Successful target sessions are encrypted with `APP_KEYS` before being stored in SQLite; passwords are not stored. If the target returns a living-verification challenge, the console displays the challenge URL for the user to complete.
+
 ## Run
 
 ```bash

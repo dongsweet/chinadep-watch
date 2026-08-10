@@ -40,6 +40,20 @@ module.exports = app => {
       value TEXT NOT NULL,
       updated_at TEXT NOT NULL
     )`);
+    await run(database, `CREATE TABLE IF NOT EXISTS target_connections (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      mobile TEXT NOT NULL UNIQUE,
+      token_ciphertext TEXT NOT NULL,
+      device_token_ciphertext TEXT,
+      target_user_id INTEGER,
+      nick_name TEXT,
+      is_verified INTEGER NOT NULL DEFAULT 0,
+      status TEXT NOT NULL,
+      last_login_at TEXT,
+      last_error TEXT,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    )`);
 
     const auth = app.config.platformAuth;
     const existing = await new Promise((resolve, reject) => {
