@@ -4,7 +4,7 @@ Egg.js MVP for connecting a user-authorized account to the China Digital Asset M
 
 The current web console is available at `/` and uses an SQLite-backed platform account. Set `ADMIN_USERNAME` and `ADMIN_PASSWORD` in `.env` before the first start; the account is created during database initialization. Changing those variables later does not overwrite an existing account.
 
-After signing in to the console, use the `监控平台账号连接` card to submit the target platform's mobile and password. Successful target sessions are encrypted with `APP_KEYS` before being stored in SQLite; passwords are not stored. If the target returns a living-verification challenge, the console displays the challenge URL for the user to complete.
+After signing in to the console, use the `监控平台账号连接` card to submit the target platform's mobile, complete the embedded CAPTCHA, request an SMS code, and submit that code. Successful target sessions are encrypted with `APP_KEYS` before being stored in SQLite; SMS codes and passwords are not stored. If the target returns a living-verification challenge, the console displays the challenge URL for the user to complete.
 
 ## Run
 
@@ -34,5 +34,27 @@ The login endpoint calls the target site's password-login API directly. It retur
 - `authenticated` with a session token when login succeeds;
 - `challenge_required` with a `challengeUrl` when the target requires living verification;
 - `authentication_failed` when the target rejects the credentials.
+
+`POST /api/connections/sms/send` sends an SMS code after the console user completes the target CAPTCHA:
+
+```json
+{
+  "mobile": "13800138000",
+  "validate": "captcha-validate-result",
+  "deviceToken": "optional-browser-device-token"
+}
+```
+
+`POST /api/connections/sms/login` accepts the SMS code:
+
+```json
+{
+  "mobile": "13800138000",
+  "code": "123456",
+  "deviceToken": "optional-browser-device-token"
+}
+```
+
+Both SMS endpoints require the console session from `POST /api/auth/login`. CAPTCHA, SMS, and any face/living verification are intentionally completed by the user in the browser.
 
 The MVP does not persist passwords, automatically bypass CAPTCHA, complete face verification, or perform trading actions. A production version must encrypt session tokens at rest and apply secret redaction, rate limiting, audit logging, and explicit user consent.
