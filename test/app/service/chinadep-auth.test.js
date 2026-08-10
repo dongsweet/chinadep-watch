@@ -8,6 +8,7 @@ function createService(response) {
     config: {
       chinadep: {
         baseUrl: 'https://m-math.chinadep.com',
+        captchaId: '2b9f754fbd9c48628e3b834c4fb519d2',
         requestTimeout: 1000,
         userAgent: 'test-agent',
       },
@@ -24,6 +25,58 @@ function createService(response) {
 }
 
 describe('service.chinadepAuth', () => {
+  it('sends an SMS login code with the captcha validation', async () => {
+    const { service, app } = createService({
+      status: 200,
+      data: { code: 1, success: true, msg: '验证码已发送', requestId: 'request-1' },
+    });
+
+    const result = await service.sendLoginSms({
+      mobile: '13800138000',
+      validate: 'captcha-validate',
+      deviceToken: 'device-token',
+    });
+
+    assert.equal(result.httpStatus, 200);
+    assert.equal(result.body.status, 'sms_sent');
+    assert.equal(app.lastRequest.url, 'https://m-math.chinadep.com/sm/api/customer/anonymous/sendLoginSms');
+    assert.deepStrictEqual(app.lastRequest.options.data, {
+      captchaId: '2b9f754fbd9c48628e3b834c4fb519d2',
+      mobile: '13800138000',
+      validate: 'captcha-validate',
+    });
+  });
+
+  it('logs in with an SMS code and normalizes the session', async () => {
+    const { service, app } = createService({
+      status: 200,
+      data: {
+        code: 1,
+        data: {
+          token: 'sms-token',
+          userId: 43,
+          mobile: '13800138000',
+          nickname: 'sms-user',
+        },
+      },
+    });
+
+    const result = await service.loginBySms({
+      mobile: '13800138000',
+      code: '123456',
+      livingCheckReturnUrl: 'https://watch.example/return',
+    });
+
+    assert.equal(result.httpStatus, 200);
+    assert.equal(result.body.session.token, 'sms-token');
+    assert.equal(app.lastRequest.url, 'https://m-math.chinadep.com/sm/api/customer/anonymous/registerOrLoginByMobile');
+    assert.deepStrictEqual(app.lastRequest.options.data, {
+      mobile: '13800138000',
+      code: '123456',
+      livingCheckReturnUrl: 'https://watch.example/return',
+    });
+  });
+
   it('logs in and returns a normalized session', async () => {
     const { service, app } = createService({
       status: 200,

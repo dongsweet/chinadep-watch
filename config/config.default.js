@@ -45,6 +45,7 @@ module.exports = appInfo => {
 
   config.chinadep = {
     baseUrl: process.env.CHINADEP_BASE_URL || 'https://m-math.chinadep.com',
+    captchaId: process.env.CHINADEP_CAPTCHA_ID || '2b9f754fbd9c48628e3b834c4fb519d2',
     requestTimeout: Number(process.env.CHINADEP_REQUEST_TIMEOUT || 15000),
     userAgent: process.env.CHINADEP_USER_AGENT || 'chinadep-watch/0.1',
   };

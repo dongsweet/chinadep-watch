@@ -11,6 +11,7 @@ services:
     environment:
       APP_KEYS: ${APP_KEYS:?set APP_KEYS in .env}
       CHINADEP_BASE_URL: ${CHINADEP_BASE_URL:-https://m-math.chinadep.com}
+      CHINADEP_CAPTCHA_ID: ${CHINADEP_CAPTCHA_ID:-2b9f754fbd9c48628e3b834c4fb519d2}
       CHINADEP_REQUEST_TIMEOUT: ${CHINADEP_REQUEST_TIMEOUT:-15000}
       CHINADEP_USER_AGENT: ${CHINADEP_USER_AGENT:-chinadep-watch/0.1}
       ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}

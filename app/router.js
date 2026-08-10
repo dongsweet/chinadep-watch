@@ -12,5 +12,7 @@ module.exports = app => {
   router.get('/api/settings', controller.settings.index);
   router.put('/api/settings', controller.settings.update);
   router.get('/api/connections', controller.connection.list);
+  router.post('/api/connections/sms/send', controller.connection.sendSms);
+  router.post('/api/connections/sms/login', controller.connection.loginBySms);
   router.post('/api/connections/login', controller.connection.login);
 };

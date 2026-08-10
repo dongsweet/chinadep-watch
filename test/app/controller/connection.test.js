@@ -13,4 +13,18 @@ describe('target platform connection', () => {
       .send({ mobile: '13800138000', password: 'not-used' })
       .expect(401);
   });
+
+  it('requires platform authentication before sending an SMS', async () => {
+    await app.httpRequest()
+      .post('/api/connections/sms/send')
+      .send({ mobile: '13800138000', validate: 'not-used' })
+      .expect(401);
+  });
+
+  it('requires platform authentication before SMS login', async () => {
+    await app.httpRequest()
+      .post('/api/connections/sms/login')
+      .send({ mobile: '13800138000', code: '123456' })
+      .expect(401);
+  });
 });
