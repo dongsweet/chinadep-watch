@@ -54,6 +54,34 @@ module.exports = app => {
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL
     )`);
+    await run(database, `CREATE TABLE IF NOT EXISTS target_assets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      target_connection_id INTEGER NOT NULL,
+      target_asset_id INTEGER NOT NULL,
+      name TEXT NOT NULL,
+      issuer_name TEXT,
+      issuer_id INTEGER,
+      assets_type_id INTEGER,
+      assets_type_name TEXT,
+      assets_file_type_name TEXT,
+      cover_url TEXT,
+      issue_price REAL,
+      max_price REAL,
+      listed_count INTEGER,
+      issue_count INTEGER,
+      issue_time TEXT,
+      trade_start_time TEXT,
+      trade_end_time TEXT,
+      trade_board INTEGER,
+      show_status INTEGER,
+      raw_json TEXT NOT NULL,
+      enabled INTEGER NOT NULL DEFAULT 1,
+      note TEXT NOT NULL DEFAULT '',
+      first_seen_at TEXT NOT NULL,
+      last_synced_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      UNIQUE(target_connection_id, target_asset_id)
+    )`);
 
     const auth = app.config.platformAuth;
     const existing = await new Promise((resolve, reject) => {

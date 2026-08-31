@@ -15,6 +15,17 @@ class ConnectionStoreService extends Service {
     return [iv, cipher.getAuthTag(), encrypted].map(item => item.toString('base64')).join(':');
   }
 
+  decrypt(value) {
+    const [ivText, tagText, encryptedText] = String(value || '').split(':');
+    if (!ivText || !tagText || !encryptedText) throw new Error('invalid encrypted value');
+    const decipher = crypto.createDecipheriv('aes-256-gcm', this.getKey(), Buffer.from(ivText, 'base64'));
+    decipher.setAuthTag(Buffer.from(tagText, 'base64'));
+    return Buffer.concat([
+      decipher.update(Buffer.from(encryptedText, 'base64')),
+      decipher.final(),
+    ]).toString('utf8');
+  }
+
   async saveAuthenticated({ session, deviceToken }) {
     const now = new Date().toISOString();
     const params = [
@@ -53,13 +64,31 @@ class ConnectionStoreService extends Service {
 
   async list() {
     return new Promise((resolve, reject) => {
-      this.app.database.all(`SELECT mobile, target_user_id AS targetUserId, nick_name AS nickName,
+      this.app.database.all(`SELECT id, mobile, target_user_id AS targetUserId, nick_name AS nickName,
         is_verified AS isVerified, status, last_login_at AS lastLoginAt, updated_at AS updatedAt
         FROM target_connections ORDER BY updated_at DESC`, (error, rows) => {
         if (error) return reject(error);
         resolve(rows.map(row => ({ ...row, isVerified: Boolean(row.isVerified) })));
       });
     });
+  }
+
+  async getCredentials(mobile) {
+    const row = await new Promise((resolve, reject) => {
+      const query = mobile
+        ? 'SELECT id, mobile, token_ciphertext, device_token_ciphertext, status FROM target_connections WHERE mobile = ?'
+        : `SELECT id, mobile, token_ciphertext, device_token_ciphertext, status
+          FROM target_connections WHERE status = 'authenticated' ORDER BY updated_at DESC LIMIT 1`;
+      const params = mobile ? [mobile] : [];
+      this.app.database.get(query, params, (error, result) => error ? reject(error) : resolve(result));
+    });
+    if (!row || row.status !== 'authenticated') return null;
+    return {
+      id: row.id,
+      mobile: row.mobile,
+      token: this.decrypt(row.token_ciphertext),
+      deviceToken: row.device_token_ciphertext ? this.decrypt(row.device_token_ciphertext) : null,
+    };
   }
 }
 

@@ -15,4 +15,7 @@ module.exports = app => {
   router.post('/api/connections/sms/send', controller.connection.sendSms);
   router.post('/api/connections/sms/login', controller.connection.loginBySms);
   router.post('/api/connections/login', controller.connection.login);
+  router.get('/api/assets', controller.asset.list);
+  router.post('/api/assets/sync', controller.asset.sync);
+  router.patch('/api/assets/:id', controller.asset.update);
 };

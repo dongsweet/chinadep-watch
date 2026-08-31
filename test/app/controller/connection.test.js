@@ -27,4 +27,12 @@ describe('target platform connection', () => {
       .send({ mobile: '13800138000', code: '123456' })
       .expect(401);
   });
+
+  it('requires platform authentication before listing assets', async () => {
+    await app.httpRequest().get('/api/assets').expect(401);
+  });
+
+  it('requires platform authentication before syncing assets', async () => {
+    await app.httpRequest().post('/api/assets/sync').send({}).expect(401);
+  });
 });

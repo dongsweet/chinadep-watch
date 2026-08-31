@@ -57,4 +57,19 @@ The login endpoint calls the target site's password-login API directly. It retur
 
 Both SMS endpoints require the console session from `POST /api/auth/login`. CAPTCHA, SMS, and any face/living verification are intentionally completed by the user in the browser.
 
+## Asset catalog
+
+`POST /api/assets/sync` reads the latest asset catalog visible to the most recently connected target account and upserts it into SQLite. An optional `mobile` selects a specific connected account:
+
+```json
+{
+  "mobile": "13800138000",
+  "pageSize": 50
+}
+```
+
+`GET /api/assets` lists locally synced assets. Use `q` to search by asset name, issuer, or type and `enabled=true|false` to filter monitoring status. `PATCH /api/assets/:id` accepts `{ "enabled": true }` or `{ "note": "..." }` for local monitoring configuration.
+
+The catalog phase is read-only against the target platform. Price snapshots, schedules, and alert rules are not enabled yet.
+
 The MVP does not persist passwords, automatically bypass CAPTCHA, complete face verification, or perform trading actions. A production version must encrypt session tokens at rest and apply secret redaction, rate limiting, audit logging, and explicit user consent.
