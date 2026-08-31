@@ -40,6 +40,7 @@ describe('service.chinadepAuth', () => {
     assert.equal(result.httpStatus, 200);
     assert.equal(result.body.status, 'sms_sent');
     assert.equal(app.lastRequest.url, 'https://m-math.chinadep.com/sm/api/customer/anonymous/sendLoginSms');
+    assert.equal(app.lastRequest.options.method, 'GET');
     assert.deepStrictEqual(app.lastRequest.options.data, {
       captchaId: '2b9f754fbd9c48628e3b834c4fb519d2',
       mobile: '13800138000',

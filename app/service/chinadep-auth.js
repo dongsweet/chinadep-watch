@@ -15,14 +15,14 @@ class ChinadepAuthService extends Service {
     return headers;
   }
 
-  async request(url, data, deviceToken) {
+  async request(url, data, deviceToken, method = 'POST') {
     const { app } = this;
     const { chinadep } = app.config;
     try {
       return await app.curl(url, {
-        method: 'POST',
+        method,
         dataType: 'json',
-        contentType: 'json',
+        ...(method === 'POST' ? { contentType: 'json' } : {}),
         data,
         headers: this.getHeaders(deviceToken),
         timeout: chinadep.requestTimeout,
@@ -107,7 +107,7 @@ class ChinadepAuthService extends Service {
       captchaId: chinadep.captchaId,
       mobile,
       validate,
-    }, deviceToken);
+    }, deviceToken, 'GET');
     const payload = response && response.data ? response.data : {};
     if (!response) {
       return { httpStatus: 502, body: { success: false, status: 'upstream_unavailable', message: 'target SMS service is unavailable' } };
