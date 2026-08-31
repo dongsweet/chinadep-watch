@@ -58,10 +58,18 @@ class ConnectionController extends Controller {
     });
 
     if (result.body.status === 'authenticated') {
-      const connection = await ctx.service.connectionStore.saveAuthenticated({
-        session: result.body.session,
-        deviceToken: deviceToken || undefined,
-      });
+      let connection;
+      try {
+        connection = await ctx.service.connectionStore.saveAuthenticated({
+          session: result.body.session,
+          deviceToken: deviceToken || undefined,
+        });
+      } catch (error) {
+        ctx.app.logger.error('[connection] failed to persist password login: %s', error.message);
+        ctx.status = 500;
+        ctx.body = { success: false, status: 'connection_store_failed', message: '监控平台已登录，但连接信息保存失败，请重试' };
+        return;
+      }
       result.body = { success: true, status: 'authenticated', connection };
     }
 
@@ -134,10 +142,18 @@ class ConnectionController extends Controller {
       deviceToken: deviceToken || undefined,
     });
     if (result.body.status === 'authenticated') {
-      const connection = await ctx.service.connectionStore.saveAuthenticated({
-        session: result.body.session,
-        deviceToken: deviceToken || undefined,
-      });
+      let connection;
+      try {
+        connection = await ctx.service.connectionStore.saveAuthenticated({
+          session: result.body.session,
+          deviceToken: deviceToken || undefined,
+        });
+      } catch (error) {
+        ctx.app.logger.error('[connection] failed to persist SMS login: %s', error.message);
+        ctx.status = 500;
+        ctx.body = { success: false, status: 'connection_store_failed', message: '监控平台已登录，但连接信息保存失败，请重试' };
+        return;
+      }
       result.body = { success: true, status: 'authenticated', connection };
     }
     ctx.status = result.httpStatus;

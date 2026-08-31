@@ -27,6 +27,7 @@ class ConnectionStoreService extends Service {
       'authenticated',
       now,
       now,
+      now,
     ];
     await new Promise((resolve, reject) => {
       this.app.database.run(`INSERT INTO target_connections
