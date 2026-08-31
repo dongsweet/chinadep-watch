@@ -45,7 +45,7 @@ describe('service.chinadepAssets', () => {
     assert.equal(result.ok, true);
     assert.equal(result.rows[0].id, 71);
     assert.equal(app.lastRequest.options.method, 'GET');
-    assert.deepStrictEqual(app.lastRequest.options.data, { pageCount: 1, pageSize: 10 });
+    assert.deepStrictEqual(app.lastRequest.options.data, { pageCount: 1, pageSize: 10, searchText: '', tradeBoard: 0 });
     assert.equal(app.lastRequest.options.headers.Authorization, 'target-token');
   });
 

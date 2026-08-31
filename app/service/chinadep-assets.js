@@ -34,13 +34,13 @@ class ChinadepAssetsService extends Service {
   async fetchPage(credentials, pageCount, pageSize) {
     const { app } = this;
     const { chinadep } = app.config;
-    const url = `${chinadep.baseUrl}/sm/api/customer/assetsPage`;
+    const url = `${chinadep.baseUrl}/sm/api/assets/anonymous/assetsPage`;
     let response;
     try {
       response = await app.curl(url, {
         method: 'GET',
         dataType: 'json',
-        data: { pageCount, pageSize },
+        data: { pageCount, pageSize, searchText: '', tradeBoard: 0 },
         headers: this.headers(credentials),
         timeout: chinadep.requestTimeout,
         followRedirect: false,
