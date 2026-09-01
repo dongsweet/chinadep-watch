@@ -4,7 +4,7 @@ const { Controller } = require('egg');
 
 class DashboardController extends Controller {
   async index() {
-    this.ctx.redirect('/accounts');
+    this.ctx.redirect('/accounts.html');
   }
 
   async loginPage() {
