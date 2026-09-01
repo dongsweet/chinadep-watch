@@ -40,7 +40,7 @@ class ChinadepAssetsService extends Service {
       response = await app.curl(url, {
         method: 'GET',
         dataType: 'json',
-        data: { pageCount, pageSize, searchText: '', tradeBoard: 0 },
+        data: { pageCount, pageSize, searchText: '' },
         headers: this.headers(credentials),
         timeout: chinadep.requestTimeout,
         followRedirect: false,

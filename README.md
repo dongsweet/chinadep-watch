@@ -59,7 +59,7 @@ Both SMS endpoints require the console session from `POST /api/auth/login`. CAPT
 
 ## Asset catalog
 
-`POST /api/assets/sync` reads the public market asset catalog from the target platform and upserts it into SQLite. An optional `mobile` selects a specific connected account (the account is still required by the local API and is used for the request context):
+`POST /api/assets/sync` reads the full public asset catalog, including regular market and专区 assets, from the target platform and upserts it into SQLite. An optional `mobile` selects a specific connected account (the account is still required by the local API and is used for the request context):
 
 ```json
 {
