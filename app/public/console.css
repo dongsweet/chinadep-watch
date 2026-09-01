@@ -1,0 +1,18 @@
+.app-content-header .container-fluid,
+.app-content > .container-fluid { max-width: 1440px; }
+.brand-mark { letter-spacing: .02em; }
+.connection-card { min-height: 132px; }
+.status-dot { width: .55rem; height: .55rem; display: inline-block; border-radius: 50%; margin-right: .35rem; }
+.status-dot.online { background: #20c997; }
+.status-dot.offline { background: #adb5bd; }
+.table td { vertical-align: middle; }
+.asset-cover { width: 42px; height: 42px; object-fit: cover; border-radius: .5rem; background: #f1f3f5; }
+.sales-cover { width: 36px; height: 36px; object-fit: cover; border-radius: .4rem; background: #f1f3f5; }
+.empty-state { padding: 3rem 1rem; color: #6c757d; text-align: center; }
+.modal .captcha-box { min-height: 90px; display: flex; align-items: center; justify-content: center; }
+.alert-list .alert { margin-bottom: .5rem; }
+.metric-card .metric-value { font-size: 1.75rem; font-weight: 600; }
+@media (max-width: 767.98px) {
+  .app-content-header h3 { font-size: 1.15rem; }
+  .table { min-width: 760px; }
+}

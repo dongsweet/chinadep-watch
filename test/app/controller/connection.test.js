@@ -35,4 +35,16 @@ describe('target platform connection', () => {
   it('requires platform authentication before syncing assets', async () => {
     await app.httpRequest().post('/api/assets/sync').send({}).expect(401);
   });
+
+  it('requires platform authentication before listing sales', async () => {
+    await app.httpRequest().get('/api/assets/1/sales').expect(401);
+  });
+
+  it('requires platform authentication before listing monitors', async () => {
+    await app.httpRequest().get('/api/monitors').expect(401);
+  });
+
+  it('requires platform authentication before creating monitors', async () => {
+    await app.httpRequest().post('/api/monitors').send({ assetId: 1, thresholdPrice: 100 }).expect(401);
+  });
 });

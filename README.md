@@ -70,6 +70,12 @@ Both SMS endpoints require the console session from `POST /api/auth/login`. CAPT
 
 `GET /api/assets` lists locally synced assets. Use `q` to search by asset name, issuer, or type and `enabled=true|false` to filter monitoring status. `PATCH /api/assets/:id` accepts `{ "enabled": true }` or `{ "note": "..." }` for local monitoring configuration.
 
+The console is split into three pages:
+
+- `/accounts` manages target-platform logins. The SMS/CAPTCHA flow is opened in a modal; CAPTCHA, SMS, and any face/living verification remain user actions.
+- `/products` displays the synced product catalog. The `销售列表` action opens a paginated modal backed by `GET /api/assets/:id/sales?pageCount=1&pageSize=10`. Each page is cached in SQLite; the first request or an explicit `refresh=true` reads the target platform.
+- `/monitoring` manages price thresholds. `POST /api/monitors` creates a rule, `PATCH /api/monitors/:id` updates it, `DELETE /api/monitors/:id` removes it, and `GET /api/monitors/status` checks enabled rules. The page polls this endpoint every 60 seconds and renders alerts locally; no third-party notification is sent.
+
 The catalog phase is read-only against the target platform. Price snapshots, schedules, and alert rules are not enabled yet.
 
 The MVP does not persist passwords, automatically bypass CAPTCHA, complete face verification, or perform trading actions. A production version must encrypt session tokens at rest and apply secret redaction, rate limiting, audit logging, and explicit user consent.

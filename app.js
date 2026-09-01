@@ -82,6 +82,29 @@ module.exports = app => {
       updated_at TEXT NOT NULL,
       UNIQUE(target_connection_id, target_asset_id)
     )`);
+    await run(database, `CREATE TABLE IF NOT EXISTS target_asset_sales_pages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      asset_id INTEGER NOT NULL,
+      page_count INTEGER NOT NULL,
+      page_size INTEGER NOT NULL,
+      total_count INTEGER NOT NULL DEFAULT 0,
+      rows_json TEXT NOT NULL,
+      fetched_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      UNIQUE(asset_id, page_count, page_size)
+    )`);
+    await run(database, `CREATE TABLE IF NOT EXISTS asset_monitors (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      asset_id INTEGER NOT NULL UNIQUE,
+      threshold_price REAL NOT NULL,
+      enabled INTEGER NOT NULL DEFAULT 1,
+      current_price REAL,
+      last_checked_at TEXT,
+      alert_active INTEGER NOT NULL DEFAULT 0,
+      last_alert_at TEXT,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    )`);
 
     const auth = app.config.platformAuth;
     const existing = await new Promise((resolve, reject) => {

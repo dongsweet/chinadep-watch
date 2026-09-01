@@ -43,6 +43,17 @@ class AssetController extends Controller {
     this.ctx.body = result.body;
   }
 
+  async sales() {
+    if (!this.ctx.session.platformUser) return this.unauthorized();
+    const assetId = Number.parseInt(this.ctx.params.id, 10);
+    const pageCount = Number.parseInt(this.ctx.query.pageCount, 10) || 1;
+    const pageSize = Number.parseInt(this.ctx.query.pageSize, 10) || 10;
+    const refresh = this.ctx.query.refresh === 'true';
+    const result = await this.ctx.service.chinadepSales.list({ assetId, pageCount, pageSize, refresh });
+    this.ctx.status = result.httpStatus;
+    this.ctx.body = result.body;
+  }
+
   unauthorized() {
     this.ctx.status = 401;
     this.ctx.body = { success: false, message: '请先登录监控平台' };
